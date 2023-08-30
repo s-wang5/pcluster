@@ -1,0 +1,143 @@
+Region: us-east-1
+Image:
+  Os: alinux2
+HeadNode:
+  InstanceType: t2.large
+  LocalStorage:
+    RootVolume:
+      Size: 100
+  Networking:
+    SubnetId: subnet-068cc9bc60c1484fc
+  Ssh:
+    KeyName: swang-east
+  CustomActions:
+    OnNodeConfigured:
+      Script: s3://willsey-pcluster/amazon-post-install.sh
+  Iam:
+    S3Access:
+        - BucketName: willsey-remapped
+          EnableWriteAccess: false
+        - BucketName: willsey-rawdata
+          EnableWriteAccess: false
+        - BucketName: willsey-pcluster
+          EnableWriteAccess: true
+    
+Scheduling:
+  Scheduler: slurm
+  SlurmSettings:
+    ScaledownIdletime: 15
+    EnableMemoryBasedScheduling: true
+  SlurmQueues:
+    - Name: spot
+      CapacityType: SPOT
+      ComputeSettings:
+          LocalStorage:
+            RootVolume:
+              Size: 50
+      ComputeResources:
+          - Name: c5-large
+            Instances:
+              - InstanceType: c5.large
+            MaxCount: 25
+          - Name: r5-large
+            Instances:
+              - InstanceType: r5.large
+            MaxCount: 25
+          - Name: m5-large
+            Instances:
+              - InstanceType: m5.large
+            MaxCount: 25
+
+          - Name: c5-xlarge
+            Instances:
+              - InstanceType: c5.xlarge
+            MaxCount: 25
+          - Name: r5-xlarge
+            Instances:
+              - InstanceType: r5.xlarge
+            MaxCount: 25
+          - Name: m5-xlarge
+            Instances:
+              - InstanceType: m5.xlarge
+            MaxCount: 25
+
+          - Name: c5-2xlarge
+            Instances:
+              - InstanceType: c5.2xlarge
+            MaxCount: 25
+          - Name: r5-2xlarge
+            Instances:
+              - InstanceType: r5.2xlarge
+            MaxCount: 25
+          - Name: m5-2xlarge
+            Instances:
+              - InstanceType: m5.2xlarge
+            MaxCount: 25
+
+          - Name: c5-4xlarge
+            Instances:
+              - InstanceType: c5.4xlarge
+            MaxCount: 25
+          - Name: r5-4xlarge
+            Instances:
+              - InstanceType: r5.4xlarge
+            MaxCount: 25
+          - Name: m5-4xlarge
+            Instances:
+              - InstanceType: m5.4xlarge
+            MaxCount: 25
+
+      CustomActions:
+          OnNodeConfigured:
+            Script: s3://willsey-pcluster/amazon-post-install.sh
+      Networking:
+        SubnetIds:
+        - subnet-0343b2936764a71b8
+      Iam:
+        S3Access:
+            - BucketName: willsey-remapped
+              EnableWriteAccess: false
+            - BucketName: willsey-rawdata
+              EnableWriteAccess: false
+            - BucketName: willsey-pcluster
+              EnableWriteAccess: true
+    - Name: ondemand
+      CapacityType: ONDEMAND
+      ComputeSettings:
+          LocalStorage:
+            RootVolume:
+              Size: 50
+      ComputeResources:
+          - Name: ondemand-c54x
+            Instances:
+              - InstanceType: c5.4xlarge
+            MaxCount: 25
+          - Name: ondemand-r54x
+            Instances:
+              - InstanceType: r5.4xlarge
+            MaxCount: 25
+          - Name: ondemand-m54x
+            Instances:
+              - InstanceType: m5.4xlarge
+            MaxCount: 25
+      
+      CustomActions:
+          OnNodeConfigured:
+            Script: s3://willsey-pcluster/amazon-post-install.sh
+      Networking:
+        SubnetIds:
+        - subnet-0343b2936764a71b8
+      Iam:
+        S3Access:
+            - BucketName: willsey-remapped
+              EnableWriteAccess: false
+            - BucketName: willsey-rawdata
+              EnableWriteAccess: false
+            - BucketName: willsey-pcluster
+              EnableWriteAccess: true
+SharedStorage:
+  - MountDir: efs
+    Name: shared-ebs
+    StorageType: Ebs
+    EbsSettings:
+      Size: 2000
